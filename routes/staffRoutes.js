@@ -48,11 +48,10 @@ router.post('/markCompleted', async (req, res) => {
       }
   
       const requestId = req.body.requestId;
-      console.log(requestId);
   
       // Update the maintenance request in the database to mark it as completed
       const [updateResult] = await db.promise().query('UPDATE maintenance SET complete = "Completed" WHERE id = ?', [requestId]);
-      console.log(updateResult);
+ 
       if (updateResult.affectedRows === 0) {
         // No rows were updated, indicating an issue with the request ID
         return res.status(404).send('Maintenance request not found.');

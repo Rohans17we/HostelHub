@@ -132,7 +132,7 @@
 .notification-container {
   flex: 1;
    max-width: 80vw;
-    width: 90%;
+    width: 80vw;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 20px;
