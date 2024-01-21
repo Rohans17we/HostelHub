@@ -143,7 +143,7 @@
                             <!-- Maintenance Requests -->
                             <% maintenance.forEach(function(request) { %>
                                 <li class="glide__slide">
-                                    <form action="/markCompleted" method="post">
+                                    <form action="/staff/markCompleted" method="post">
                                         <div class="notification">
                                             <p class="notification-header">Room #<%= request.room %></p>
                                             <p><strong>By:</strong> <%= request.enrollment %></p>

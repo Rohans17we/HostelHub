@@ -38,6 +38,33 @@ router.get('/showMaintenanceRequests', staffController.showMaintenanceRequests, 
   res.render('staffdashboard', { username: req.user.username, showMaintenanceRequests: true, maintenance: req.maintenance, formatDate: staffController.formatDate });
 });
 
+//MAINTENANCE UPDATE
+// Route to handle marking a maintenance request as completed
+router.post('/markCompleted', async (req, res) => {
+    try {
+      if (!req.user) {
+        console.log('Login Required!');
+        return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>");
+      }
+  
+      const requestId = req.body.requestId;
+      console.log(requestId);
+  
+      // Update the maintenance request in the database to mark it as completed
+      const [updateResult] = await db.promise().query('UPDATE maintenance SET complete = "Completed" WHERE id = ?', [requestId]);
+      console.log(updateResult);
+      if (updateResult.affectedRows === 0) {
+        // No rows were updated, indicating an issue with the request ID
+        return res.status(404).send('Maintenance request not found.');
+      }
+
+      return res.send("<script>alert('Request Marked Completed!');window.location.href = '/staff/showMaintenanceRequests';</script>");
+    } catch (error) {
+      console.error('Error in /markCompleted route:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+  
 
 //LEAVE APPLICATIONS
 router.get('/showLeaveApplications', staffController.fetchLeaveApplications, (req, res) => {
@@ -86,8 +113,9 @@ router.post('/studentRecords', staffController.fetchStudentRecords, (req, res) =
       res.status(500).send('Internal Server Error');
     }
   });
-  
-  
+
+
+
 //CHANGE PASSWORD
 router.post('/changePassword', staffController.staffChangePass);
 
