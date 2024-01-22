@@ -121,7 +121,45 @@
           <!-- MARK ATTENDANCE-->
           <% if (typeof showMarkAttendance !== 'undefined' && showMarkAttendance !== null && showMarkAttendance) { %>
             <section class="dashboard-right-container-markAttendance">
-
+              <div class="attendance">
+                <h1 style="text-align: center; color: #333; margin-top: 20px; padding: 10px;">Attendance</h1>
+            
+                <form method="post" action="/staff/markAttendance">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Room Number</th>
+                        <th>Enrollment Number</th>
+                        <th>Name</th>
+                        <th><%= today %></th>
+                        <th><%= yesterday %></th>
+                        <th><%= dayBeforeYesterday %></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% records.forEach(record => { %>
+                        <tr>
+                        <td><%= record.room %></td>
+                        <td><%= record.enrollment %></td>
+                        <td><%= record.name %></td>
+                        <td>
+                            <label>
+                            <input type="checkbox" name="attendance_<%= record.enrollmentNumber %>" value="present">
+                            Present
+                            </label>
+                        </td>
+                        <td><%= record.yesterday || 'N/A' %></td>
+                        <td><%= record.dayBeforeYesterday || 'N/A' %></td>
+                        </tr>
+                    <% }); %>
+                    </tbody>
+                </table>
+            
+                <div class="send-button">
+                    <button type="submit">Mark</button>
+                </div>
+                </form>
+            </div>
             </section>
           <% }
 

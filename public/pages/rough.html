@@ -3,174 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance Requests</title>
+    <title>Hostel Attendance</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
 
-    <!-- Include Glide.js and its dependencies -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.core.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.theme.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide"></script>
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
 
-   <style>
-    body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
+        .attendance {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
 
-.notification-container {
-    max-width: 80vw;
-    width: auto;
-   
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-}
+        .attendance table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
 
-.notification {
-    padding: 20px; /* Increased padding */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 20px; /* Increased margin */
-    background-color: #f9f9f9;
-    position: relative;
-    transition: background-color 0.3s ease-in-out;
-}
+        .attendance th, .attendance td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
 
-.notification:hover {
-    background-color: #e0e0e0;
-}
+        .attendance th {
+            background-color: #4CAF50;
+            color: #fff;
+        }
 
-.notification p {
-    margin: 10px 0; /* Increased top and bottom margin */
-}
+        .attendance input[type="checkbox"] {
+            margin-right: 5px;
+        }
 
-.notification-header {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-}
+        .send-button {
+            text-align: center;
+            margin-top: 10px;
+        }
 
-.mark-completed-btn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 15px 25px; /* Increased padding */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.mark-completed-btn:hover {
-    background-color: #45a049;
-}
-
-/* Add Glide.js styles */
-.glide__slides {
-    display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.glide__slide {
-    flex: 0 0 auto;
-    width: 100%;
-}
-
-   </style>
-
+        .send-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
+    <div class="attendance">
+        <h1>Hostel Attendance</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room Number</th>
+                    <th>Enrollment Number</th>
+                    <th>Name</th>
+                    <th>Mark Today's Attendance</th>
+                    <th>Yesterday</th>
+                    <th>Day Before Yesterday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>101</td>
+                    <td>EN123456</td>
+                    <td>John Doe</td>
+                    <td>
+                        <label><input type="checkbox" name="attendance_1" value="present"> Present</label>
+                    </td>
+                    <td>Absent</td>
+                    <td>Present</td>
+                </tr>
+                <tr>
+                    <td>102</td>
+                    <td>EN654321</td>
+                    <td>Jane Doe</td>
+                    <td>
+                        <label><input type="checkbox" name="attendance_2" value="present"> Present</label>
+                    </td>
+                    <td>Present</td>
+                    <td>Present</td>
+                </tr>
+                <!-- Add more dummy entries as needed -->
+                <tr>
+                    <td>103</td>
+                    <td>EN789012</td>
+                    <td>Bob Smith</td>
+                    <td>
+                        <label><input type="checkbox" name="attendance_3" value="present"> Present</label>
+                    </td>
+                    <td>Present</td>
+                    <td>Absent</td>
+                </tr>
+                <tr>
+                    <td>104</td>
+                    <td>EN567890</td>
+                    <td>Alice Johnson</td>
+                    <td>
+                        <label><input type="checkbox" name="attendance_4" value="present"> Present</label>
+                    </td>
+                    <td>Absent</td>
+                    <td>Present</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div class="notification-container">
-        <div class="glide">
-            <div class="glide__track" data-glide-el="track">
-                <ul class="glide__slides">
-
-                    <!-- Maintenance Requests -->
-                    <li class="glide__slide">
-                        <form action="/markCompleted" method="post">
-                            <div class="notification">
-                                <p class="notification-header">Maintenance Request #1</p>
-                                <p><strong>Date:</strong> January 15, 2024</p>
-                                <p><strong>Details:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec justo eget justo auctor blandit.</p>
-                                <button type="submit" class="mark-completed-btn" name="requestId" value="1">Mark Completed</button>
-                            </div>
-                        </form>
-                    </li>
-
-                    <li class="glide__slide">
-                        <form action="/markCompleted" method="post">
-                            <div class="notification">
-                                <p class="notification-header">Maintenance Request #2</p>
-                                <p><strong>Date:</strong> January 18, 2024</p>
-                                <p><strong>Details:</strong> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                                <button type="submit" class="mark-completed-btn" name="requestId" value="2">Mark Completed</button>
-                            </div>
-                        </form>
-                    </li>
-
-                    <li class="glide__slide">
-                      <form action="/markCompleted" method="post">
-                          <div class="notification">
-                              <p class="notification-header">Maintenance Request #2</p>
-                              <p><strong>Date:</strong> January 18, 2024</p>
-                              <p><strong>Details:</strong> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                              <button type="submit" class="mark-completed-btn" name="requestId" value="2">Mark Completed</button>
-                          </div>
-                      </form>
-                  </li>
-
-                  <li class="glide__slide">
-                    <form action="/markCompleted" method="post">
-                        <div class="notification">
-                            <p class="notification-header">Maintenance Request #2</p>
-                            <p><strong>Date:</strong> January 18, 2024</p>
-                            <p><strong>Details:</strong> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                            <button type="submit" class="mark-completed-btn" name="requestId" value="2">Mark Completed</button>
-                        </div>
-                    </form>
-                </li>
-
-                <li class="glide__slide">
-                  <form action="/markCompleted" method="post">
-                      <div class="notification">
-                          <p class="notification-header">Maintenance Request #2</p>
-                          <p><strong>Date:</strong> January 18, 2024</p>
-                          <p><strong>Details:</strong> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                          <button type="submit" class="mark-completed-btn" name="requestId" value="2">Mark Completed</button>
-                      </div>
-                  </form>
-              </li>
-
-                    <!-- Add more glide__slide items for additional maintenance requests -->
-
-                </ul>
-            </div>
+        <div class="send-button">
+            <button onclick="sendAttendance()">Send Attendance</button>
         </div>
     </div>
 
-    <!-- Include Glide.js script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Glide.js
-            var glide = new Glide('.glide', {
-                type: 'carousel',
-                perView: 2
-                // Add more options as needed
-            });
-
-            glide.mount();
-        });
+        function sendAttendance() {
+            // You can implement the logic to send attendance data to the backend here
+            alert("Attendance data sent to the backend!");
+        }
     </script>
 </body>
 </html>

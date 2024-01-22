@@ -116,9 +116,6 @@ app.use('/stafflogin', staffController.stafflogin, (req, res) => {
     res.render("staffDashboard", {username:req.user.username});
 });
 
-
-
-
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

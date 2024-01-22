@@ -184,6 +184,30 @@ exports.showMaintenanceRequests = async (req, res, next) => {
   }
 };
 
+//MAINTENANCE UPDATE
+exports.markCompleted = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      console.log('Login Required!');
+      return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>");
+    }
+
+    const requestId = req.body.requestId;
+
+    // Update the maintenance request in the database to mark it as completed
+    const [updateResult] = await db.promise().query('UPDATE maintenance SET complete = "Completed" WHERE id = ?', [requestId]);
+
+    if (updateResult.affectedRows === 0) {
+      // No rows were updated, indicating an issue with the request ID
+      return res.status(404).send('Maintenance request not found.');
+    }
+
+    return next(); // Continue to the next middleware or route handler
+  } catch (error) {
+    console.error('Error in markCompletedMiddleware:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 
 //STUDENT RECORDS

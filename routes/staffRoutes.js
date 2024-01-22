@@ -31,38 +31,45 @@ router.get('/showChangePassword', (req, res) => {
 router.get('/showStudentRecords', (req, res) => {
     res.render("staffDashboard", { username:req.user.username, showStudentRecords: true });
 });
+//Route for Mark Attendance
+router.get('/showMarkAttendance', async (req, res) => {
+  try {
+
+    if (!req.user) {
+      console.log('Login Required!');
+      return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>"); 
+    }
+
+    const currentDate = new Date().toLocaleDateString('en-GB'); // Get current date in DD-MM-YY format
+
+    const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+    const yesterday = new Date(Date.now() - oneDay).toLocaleDateString('en-GB');
+    const dayBeforeYesterday = new Date(Date.now() - 2 * oneDay).toLocaleDateString('en-GB');
+
+    const [results] = await db.promise().query('SELECT * FROM attendance ORDER BY room ASC');
+      console.log(results);
+    if (results.length === 0) {
+      // Handle case where no records are found
+      res.status(404).send('No records found.');
+    } else {
+      res.render('staffDashboard', { username:req.user.username, showMarkAttendance: true, records: results, today: currentDate, yesterday, dayBeforeYesterday });
+    }
+  } catch (error) {
+    console.error('Error fetching records:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 //MAINTENACE REQUEST
 router.get('/showMaintenanceRequests', staffController.showMaintenanceRequests, (req, res) => {
-  // Render the EJS template with the maintenance data from the request object
   res.render('staffdashboard', { username: req.user.username, showMaintenanceRequests: true, maintenance: req.maintenance, formatDate: staffController.formatDate });
 });
 
 //MAINTENANCE UPDATE
-// Route to handle marking a maintenance request as completed
-router.post('/markCompleted', async (req, res) => {
-    try {
-      if (!req.user) {
-        console.log('Login Required!');
-        return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>");
-      }
-  
-      const requestId = req.body.requestId;
-  
-      // Update the maintenance request in the database to mark it as completed
-      const [updateResult] = await db.promise().query('UPDATE maintenance SET complete = "Completed" WHERE id = ?', [requestId]);
- 
-      if (updateResult.affectedRows === 0) {
-        // No rows were updated, indicating an issue with the request ID
-        return res.status(404).send('Maintenance request not found.');
-      }
-
-      return res.send("<script>alert('Request Marked Completed!');window.location.href = '/staff/showMaintenanceRequests';</script>");
-    } catch (error) {
-      console.error('Error in /markCompleted route:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+router.post('/markCompleted', staffController.markCompleted, (req, res) => {
+  return res.send("<script>alert('Request Marked Completed!'); window.location.href = '/staff/showMaintenanceRequests';</script>");
+});
   
 
 //LEAVE APPLICATIONS
