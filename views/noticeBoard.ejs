@@ -56,17 +56,22 @@
             <!-- Glide.js Carousel -->
             <div class="glide">
                 <div class="glide__track" data-glide-el="track">
-                    <ul class="glide__slides" >
+                    <ul class="glide__slides" style="display: flex; align-items: center; justify-content: center;">
                         <!-- Slides -->
                         <% notices.forEach(function(notice) { %>
-                            <li class="glide__slide">
-                                <div class="notice">
+                            <li class="glide__slide" >
+                                <div class="notice" style="height: auto;">
                                     <h2 class="notice-heading"><%= notice.heading %></h2>
                                     <p class="notice-body"><%= notice.body %></p>
-                                    <a href="<%= trimPublicFromPath(notice.picturePath) %>">
-                                      <img class="notice-image" src="<%= trimPublicFromPath(notice.picturePath) %>" alt="Notice Image">
-                                    </a>
-                                      <p class="published-date">Published on: <%= formatDate(notice.created_at) %></p>
+                                    <% if (notice.picturePath) { %>
+                                      <a href="<%= trimPublicFromPath(notice.picturePath) %>">
+                                        <img class="notice-image" src="<%= trimPublicFromPath(notice.picturePath) %>" alt="Notice Image">
+                                      </a>
+                                        
+                                  <% } else { %>
+                                      
+                                  <% } %>
+                                  <p class="published-date">Published on: <%= formatDate(notice.created_at) %></p>
                                 </div>
                             </li>
                         <% }); %>

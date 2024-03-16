@@ -32,32 +32,8 @@ router.get('/showStudentRecords', (req, res) => {
     res.render("staffDashboard", { username:req.user.username, showStudentRecords: true });
 });
 //Route for Mark Attendance
-router.get('/showMarkAttendance', async (req, res) => {
-  try {
-
-    if (!req.user) {
-      console.log('Login Required!');
-      return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>"); 
-    }
-
-    const currentDate = new Date().toLocaleDateString('en-GB'); // Get current date in DD-MM-YY format
-
-    const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
-    const yesterday = new Date(Date.now() - oneDay).toLocaleDateString('en-GB');
-    const dayBeforeYesterday = new Date(Date.now() - 2 * oneDay).toLocaleDateString('en-GB');
-
-    const [results] = await db.promise().query('SELECT * FROM attendance ORDER BY room ASC');
-      console.log(results);
-    if (results.length === 0) {
-      // Handle case where no records are found
-      res.status(404).send('No records found.');
-    } else {
-      res.render('staffDashboard', { username:req.user.username, showMarkAttendance: true, records: results, today: currentDate, yesterday, dayBeforeYesterday });
-    }
-  } catch (error) {
-    console.error('Error fetching records:', error);
-    res.status(500).send('Internal Server Error');
-  }
+router.get('/showMarkAttendance', staffController.showMarkAttendance, (req, res) => {
+  res.render('staffDashboard', req.attendanceData);
 });
 
 

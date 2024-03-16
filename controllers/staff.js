@@ -80,7 +80,7 @@ exports.staffisLoggedIn = async (req, res, next) => {
 
 //LEAVE STATUS
 // Define formatDate and trimPublicFromPath functions
-exports.formatDate = function(date) {
+  exports.formatDate = function(date) {
     const formattedDate = new Date(date).toDateString();
     return formattedDate;
   };
@@ -92,7 +92,6 @@ exports.formatDate = function(date) {
     // Remove any leading slash to ensure the path is valid
     return trimmedPath.startsWith('/') ? trimmedPath.slice(1) : trimmedPath;
   };
-  
   // Middleware function to fetch leave applications for a specific user
   exports.fetchLeaveApplications = async (req, res, next) => {
     try {
@@ -209,6 +208,46 @@ exports.markCompleted = async (req, res, next) => {
   }
 };
 
+
+//MARK ATTENDANCE
+//show mark attendance
+exports.showMarkAttendance = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      console.log('Login Required!');
+      return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>");
+    }
+
+    const currentDate = new Date().toLocaleDateString('en-GB'); // Get current date in DD-MM-YY format
+
+    const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+    const yesterday = new Date(Date.now() - oneDay).toLocaleDateString('en-GB');
+    const dayBeforeYesterday = new Date(Date.now() - 2 * oneDay).toLocaleDateString('en-GB');
+
+    const [results] = await db.promise().query('SELECT * FROM attendance ORDER BY room ASC');
+    console.log(results);
+
+    if (results.length === 0) {
+      // Handle case where no records are found
+      return res.status(404).send('No records found.');
+    }
+
+    // Attach data to request for later use in the route
+    req.attendanceData = {
+      username: req.user.username,
+      showMarkAttendance: true,
+      records: results,
+      today: currentDate,
+      yesterday,
+      dayBeforeYesterday,
+    };
+
+    next(); // Move to the next middleware or route handler
+  } catch (error) {
+    console.error('Error fetching records:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 //STUDENT RECORDS
 exports.fetchStudentRecords = async (req, res, next) => {
