@@ -99,10 +99,12 @@ exports.staffisLoggedIn = async (req, res, next) => {
         console.log('Login Required!');
         return res.send("<script>alert('User not found!'); window.location.href = '/staff/home';</script>"); 
       }
-  
+      console.log("inside staff");
       const [leaveApplications] = await db.promise().query(
-        'SELECT * FROM leave_applications WHERE (status = "" OR status = "rejected") AND (remarks <> "Student is physically present") ORDER BY appliedOn DESC'
+        'SELECT * FROM leave_applications WHERE ((status = "pending" OR status = "rejected") AND (remarks IS NOT NULL) ) ORDER BY appliedOn DESC'
       );
+
+      console.log(leaveApplications);
   
       if (!leaveApplications || leaveApplications.length === 0) {
         // No leave applications found for the user

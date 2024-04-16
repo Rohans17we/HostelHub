@@ -186,9 +186,10 @@ exports.formatDate = function(date) {
       }
   
       const [leaveApplications] = await db.promise().query(
-        'SELECT * FROM leave_applications WHERE (status <> "approved") AND (remarks <> "") ORDER BY appliedOn DESC'
+        'SELECT * FROM leave_applications WHERE (status <> "approved") AND (remarks IS NOT NULL) ORDER BY appliedOn DESC'
       );
-  
+
+      console.log(leaveApplications);
       if (!leaveApplications || leaveApplications.length === 0) {
         // No leave applications found for the user
         res.send("<script>alert('No Applications found!'); window.location.href = '/warden/home';</script>"); 
