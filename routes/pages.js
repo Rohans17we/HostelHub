@@ -1,7 +1,45 @@
 const express = require("express");
 const router = express.Router();
 
+const nodemailer = require('nodemailer');
 
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Use `true` for port 465, `false` for all other ports
+  auth: {
+    user: 'Rohans17we@gmail.com', // Your email address
+    pass: 'lqoo cuuf iiwr vfbv' // Your password
+  },
+  connectionTimeout: 300000,
+  greetingTimeout: 300000,
+  socketTimeout: 300000,
+});
+
+router.post('/contactForm', async (req, res) => {
+    try {
+      // Extract form data
+      const { firstName, lastName, email, message } = req.body;
+  
+      // Compose email message
+      const mailOptions = {
+        from: 'Rohans17we@gmail.com', // Sender address
+        to: 'Rohans17we@gmail.com', // List of recipients
+        subject: 'New Contact Form Submission',
+        text: `You have received a new contact form submission:\n\nFirst Name: ${firstName}\nLast Name: ${lastName}\nEmail: ${email}\nMessage: ${message}`,
+      };
+  
+      // Send email
+      await transporter.sendMail(mailOptions);
+  
+      // Respond to client
+      res.send("<script>alert('Email sent successfully!'); window.location.href = '/contact';</script>"); 
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('Error sending email');
+    }
+  });
 
 
 // Define the route for the home page

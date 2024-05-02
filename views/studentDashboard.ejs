@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HMS</title>
+    <title>HH</title>
 
     <!-- External CSS files -->
     <link rel="stylesheet" href="/css/navbar.css">
@@ -132,7 +132,7 @@
                             </section>
                             
                             <div class="download-button">
-                              <button><a href="/student/downloadLeaveApplication" style="text-decoration: none;">Download Application</a></button>
+                              <button><a href="/student/downloadLeaveApplication?id=<%= application.id %>"  style="text-decoration: none;">Download Application</a></button>
                             </div>
                           </div>
                         </li>
@@ -336,7 +336,7 @@
           focusAt: 'center',
           breakpoints: {
             1920: { perView: 2 },
-            1028: { perView: 2 },
+            1028: { perView: 1 },
             480: { perView: 1 },
           },
         });

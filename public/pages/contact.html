@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HMS</title>
+    <title>HH</title>
 
     <!-- External CSS files -->
     <link rel="stylesheet" href="../css/navbar.css">
@@ -61,9 +61,9 @@
                     <form method="POST" class="contact-form" action="/contactForm">
                         <section class="contact-form-leftsection">
                             <img src="../assets/contactUs.png" class="contact-img"/>
-                            <input type="text" class="input-field" placeholder="First Name">
-                            <input type="text" class="input-field" placeholder="Last Name">
-                            <input type="email" class="input-field" placeholder="Email">
+                            <input type="text" class="input-field" placeholder="First Name" name="firstName">
+                            <input type="text" class="input-field" placeholder="Last Name" name="lastName">
+                            <input type="email" class="input-field" placeholder="Email" name="email">
                             <div class="submit-btn">
                                 <div class="input-data">
                                    <div class="inner"></div>
@@ -72,7 +72,7 @@
                              </div>
                         </section>
                         <section class="contact-form-rightsection">
-                            <textarea class="message-field" placeholder="Write your message..."></textarea>
+                            <textarea class="message-field" placeholder="Write your message..." name="message"></textarea>
                         </section>
                     </form>
                 </section>
@@ -84,7 +84,7 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">
-                <img src="../assets/HMS_logo_transparent.png" alt="Your Logo" style="width: 100px; aspect-ratio: 16/10;">
+                <img src="../assets/HH_logo_transparent.png" alt="Your Logo" style="width: 100px; aspect-ratio: 16/10;">
             </div>
             <div class="separator"></div> <!-- Use the gradient separator here -->
             <div class="footer-links">

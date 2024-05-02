@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const studentController = require("../controllers/student.js")
 
-
 // Route for the Welcome Text
 router.get('/', (req, res) => {
     res.render("studentDashboard", { username: req.user.enrollment });
@@ -24,6 +23,8 @@ router.get('/showMaintenanceApplication', (req, res) => {
 });
 
 
+//DOWNLOAD APPLICATION
+router.get('/downloadLeaveApplication', studentController.downloadLeaveApplicationPDF);
 
 //LEAVE STATUS
 router.get('/showLeaveStatus', studentController.fetchLeaveApplications, (req, res) => {

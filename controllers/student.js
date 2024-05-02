@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt")
 const { promisify } = require("util");
 const path=require('path');
 
+const nodemailer = require('nodemailer');
+
 const mysql = require("mysql2");
 
 const db = mysql.createConnection({
@@ -323,6 +325,167 @@ exports.studentChangePass = async (req, res) => {
         return res.status(401).send("Unauthorized");
     }
 };
+
+
+const puppeteer = require('puppeteer');
+
+
+// Define a function to format date
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+}
+
+
+exports.downloadLeaveApplicationPDF = async (req, res, next) => {
+  try {
+    // Get the application ID from the query parameters
+    const applicationId = req.query.id;
+
+    // Fetch leave application details from the database
+    const [leaveApplications] = await db.promise().query(
+      'SELECT * FROM leave_applications WHERE id = ?',
+      [applicationId]
+    );
+
+    // Check if leave application exists
+    if (leaveApplications.length === 0) {
+      return res.status(404).send('Leave application not found');
+    }
+
+    // Extract leave application details
+    const leaveApplication = leaveApplications[0];
+
+    // Generate email address from username
+    const emailAddress = `${leaveApplication.username}@juetguna.in`;
+
+    // Generate HTML content for the PDF
+    const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+          margin: 0;
+          padding: 20px;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #fff;
+        }
+        h1 {
+          text-align: center;
+          color: #333;
+          margin-bottom: 20px;
+        }
+        .details {
+          margin-bottom: 20px;
+        }
+        .details p {
+          margin: 8px 0;
+          font-weight: bold;
+          color: #555; /* Change label color to distinguish from data */
+        }
+        .data {
+          color: #333; /* Change data color for better readability */
+        }
+        .status {
+          text-align: center;
+          text-transform: uppercase;
+          color: #50C878; /* Change status color to a more noticeable one */
+          font-size: 18px; /* Increase font size */
+          margin-top: 30px; /* Add more space above status */
+          border-top: 2px solid #ccc; /* Add a border above status */
+          padding-top: 20px; /* Add padding above status */
+        }
+        .remarks {
+          margin-top: 20px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Leave OutPass</h1>
+        <div class="details">
+          <p><span class="data">Enrollment:</span> ${leaveApplication.username}</p>
+          <p><span class="data">Name:</span> ${leaveApplication.name}</p>
+          <p><span class="data">Room Number:</span> ${leaveApplication.room_no}</p>
+          <p><span class="data">From Date:</span> ${formatDate(leaveApplication.from_date)}</p>
+          <p><span class="data">To Date:</span> ${formatDate(leaveApplication.to_date)}</p>
+          <p><span class="data">Number of Days:</span> ${leaveApplication.no_of_days}</p>
+          <p><span class="data">Address on Leave:</span> ${leaveApplication.address}, ${leaveApplication.city}, ${leaveApplication.state}, ${leaveApplication.zipcode}</p>
+          <p><span class="data">Reason for Leave:</span> ${leaveApplication.reason}</p>
+        </div>
+        <div class="status">
+          <span class="data">Status:</span> ${leaveApplication.status}
+        </div>
+      </div>
+    </body>
+    </html>
+    
+    `;
+
+    // Launch a headless Chrome browser
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Set the HTML content and generate PDF
+    await page.setContent(htmlContent);
+    const pdfBuffer = await page.pdf();
+
+    // Close the browser
+    await browser.close();
+
+    // Set response headers to trigger download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="leave_application.pdf"');
+
+    // Send the PDF buffer as the response
+    res.send(pdfBuffer);
+
+     // Send the PDF via email
+     const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // Use `true` for port 465, `false` for all other ports
+      auth: {
+        user: 'Rohans17we@gmail.com', // Your email address
+        pass: 'lqoo cuuf iiwr vfbv' // Your password
+      },
+      connectionTimeout: 300000,
+      greetingTimeout: 300000,
+      socketTimeout: 300000,
+    });
+
+    const mailOptions = {
+      from: 'Rohans17we@gmail.com', // Sender address
+      to: emailAddress, // Use the generated email address
+      subject: 'Leave Application',
+      text: 'Please find attached the leave application PDF.',
+      attachments: [{
+        filename: 'leave_application.pdf',
+        content: pdfBuffer
+      }]
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+        res.send("<script>alert('Leave Outpass also sent to your email!'); window.location.href = '/student/showLeaveStatus';</script>");
+      }
+    });
+
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    res.status(500).send('Error downloading PDF');
+  }
+};
+
 
 //LOGOUT
 exports.studentlogout = (req, res) => {
