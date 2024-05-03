@@ -251,6 +251,61 @@ exports.showMarkAttendance = async (req, res, next) => {
   }
 };
 
+
+//mark Attendance
+exports.markAttendance = async (req, res) => {
+  try {
+    const currentDate = new Date().toLocaleDateString('en-GB'); // Get current date in DD-MM-YY format
+    const attendanceData = req.body;
+
+    console.log(attendanceData);
+
+    // Step 1: Alter table to add column with current date heading and set 'A' as the default value
+    const alterQuery = `ALTER TABLE attendance ADD COLUMN \`${currentDate}\` VARCHAR(255) DEFAULT 'A'`;
+
+    db.query(alterQuery, (alterError) => {
+      if (alterError) {
+        console.error('Error altering table:', alterError);
+        return res.send("<script>alert('Attendance Already Marked!'); window.location.href = '/staff';</script>");
+      }
+
+      // Step 2: Insert attendance values into the new column
+      const insertQueries = [];
+      
+      for (const enrollmentId in attendanceData.attendance) {
+        const isChecked = attendanceData.attendance[enrollmentId] === 'P' ? 'P' : 'A';
+        const insertQuery = `UPDATE attendance SET \`${currentDate}\` = '${isChecked}' WHERE enrollment = '${enrollmentId}'`;
+        insertQueries.push(insertQuery);
+      }
+      
+      
+
+
+      console.log(insertQueries);
+// Execute all insert queries
+insertQueries.forEach((query) => {
+  db.query(query, (insertError) => {
+    if (insertError) {
+      console.error('Error inserting attendance:', insertError);
+    }
+  });
+});
+
+res.send("<script>alert('Attendance Marked!'); window.location.href = '/staff';</script>");
+});
+} catch (err) {
+console.log(err);
+return res.status(401).send('Unauthorized');
+}
+};
+
+
+
+
+
+
+
+
 //STUDENT RECORDS
 exports.fetchStudentRecords = async (req, res, next) => {
     try {

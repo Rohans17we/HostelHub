@@ -132,8 +132,7 @@
                         <th>Enrollment Number</th>
                         <th>Name</th>
                         <th><%= today %></th>
-                        <th><%= yesterday %></th>
-                        <th><%= dayBeforeYesterday %></th>
+                        
                     </tr>
                     </thead>
                     <tbody>
@@ -144,12 +143,10 @@
                         <td><%= record.name %></td>
                         <td>
                             <label>
-                            <input type="checkbox" name="attendance_<%= record.enrollmentNumber %>" value="present">
+                            <input type="checkbox" name="attendance[<%= record.enrollment %>]" value="P">
                             Present
                             </label>
                         </td>
-                        <td><%= record.yesterday || 'N/A' %></td>
-                        <td><%= record.dayBeforeYesterday || 'N/A' %></td>
                         </tr>
                     <% }); %>
                     </tbody>

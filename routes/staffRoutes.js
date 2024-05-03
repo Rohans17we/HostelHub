@@ -35,12 +35,19 @@ router.get('/showStudentRecords', (req, res) => {
 router.get('/showMarkAttendance', staffController.showMarkAttendance, (req, res) => {
   res.render('staffDashboard', req.attendanceData);
 });
-
+ 
 
 //MAINTENACE REQUEST
 router.get('/showMaintenanceRequests', staffController.showMaintenanceRequests, (req, res) => {
   res.render('staffdashboard', { username: req.user.username, showMaintenanceRequests: true, maintenance: req.maintenance, formatDate: staffController.formatDate });
 });
+
+
+//MARK ATTENDANCE
+router.post('/markAttendance', staffController.markAttendance, (req, res) => {
+  return res.send("<script>alert('Attendance Marked!'); window.location.href = '/staff/home';</script>");
+});
+
 
 //MAINTENANCE UPDATE
 router.post('/markCompleted', staffController.markCompleted, (req, res) => {
